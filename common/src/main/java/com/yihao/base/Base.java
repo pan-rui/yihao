@@ -1,10 +1,13 @@
-package com.yihao.core;
+package com.yihao.base;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +34,16 @@ public interface Base {
                 errors.append(MessageFormat.format(fieldError.getDefaultMessage(), fieldError.getField(), fieldError.getRejectedValue()));
         }
         return new BaseReturn(BaseReturn.Err_data_inValid, errors.toString());
+    }
+    //日期格式化为常用格式
+    static String formatDate(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(date);
+    }
+
+    static String formatDateTime(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return df.format(date);
     }
 
 }

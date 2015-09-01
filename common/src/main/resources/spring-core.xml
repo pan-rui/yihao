@@ -18,7 +18,7 @@
     http://www.springframework.org/schema/aop
     http://www.springframework.org/schema/aop/spring-aop.xsd
     http://www.springframework.org/schema/util
-    http://www.springframework.org/schema/util/spring-util.xsd" default-autowire="byName">
+    http://www.springframework.org/schema/util/spring-util.xsd">
     <import resource="base.xml"/>
     <!-- 打开Spring的Annotation支持 -->
 	<context:annotation-config />

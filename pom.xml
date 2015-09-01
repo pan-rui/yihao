@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yiwu</groupId>
+    <groupId>com.yihao</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
@@ -312,7 +312,7 @@
                 </dependency>-->
     </dependencies>
     <build>
-        <finalName>yiwu</finalName>
+        <finalName>yihao</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -345,7 +345,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>    <!--这里也可以使用tomcat7-maven-plugin-->
                 <version>2.2</version>   <!--最新版本-->
                 <configuration>
-                    <url>http://localhost:8080/jcyt-yiwu</url>    <!--配置远程tomcat的路劲-->
+                    <url>http://localhost:8080/jcyt-yihao</url>    <!--配置远程tomcat的路劲-->
                     <username>admin</username>
                     <password>admin123</password>
                     <uriEncoding>UTF-8</uriEncoding>   <!--tomcat的url编码  达到和修改server.xml文件一样的功能-->

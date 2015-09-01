@@ -1,21 +1,24 @@
 package com.yihao.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.yihao.annotaion.ControllerLog;
-import com.yihao.annotaion.ServiceLog;
+import com.hhn.dao.ISystemLogDao;
+import com.hhn.pojo.AccountUserDo;
+import com.hhn.pojo.SystemLog;
+import com.hhn.util.annotaion.ControllerLog;
+import com.hhn.util.annotaion.ServiceLog;
 import com.yihao.base.BaseService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.Calendar;
 import java.util.Map;
 
 /**
@@ -23,16 +26,14 @@ import java.util.Map;
  */
 @Component
 @Aspect
-public class LogAspect {
-/*@Resource
-private ISystemLogDao systemLogDao;*/
-    @Autowired
-    private BaseService baseService;
-    private final Logger logger = LoggerFactory.getLogger(LogAspect.class);
-    @Pointcut("@annotation(com.yihao.util.annotaion.ServiceLog)")
+public class LogAspect extends BaseService {
+@Resource
+private ISystemLogDao systemLogDao;
+
+    @Pointcut("@annotation(com.hhn.util.annotaion.ServiceLog)")
     public void serviceAspect(){}
 
-    @Pointcut("@annotation(com.yihao.util.annotaion.ControllerLog)")
+    @Pointcut("@annotation(com.hhn.util.annotaion.ControllerLog)")
     public void controllerAspect(){}
 
     @Before("controllerAspect()")
@@ -48,7 +49,7 @@ private ISystemLogDao systemLogDao;*/
         }else userId= Integer.parseInt(String.valueOf(((AccountUserDo) user).getId()));
         String ip = request.getRemoteAddr();
         try {
-/*            SystemLog log = new SystemLog();
+            SystemLog log = new SystemLog();
             log.setDescription(getMethodDescription(joinPoint,0));
             log.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()");
             log.setLog_type(Byte.valueOf("0"));
@@ -58,7 +59,7 @@ private ISystemLogDao systemLogDao;*/
             log.setUser_id(userId);
             log.setParams(JSON.toJSONString(joinPoint.getArgs()));
             log.setCtime(Calendar.getInstance().getTime());
-            systemLogDao.save(log);*/
+            systemLogDao.save(log);
         } catch (Exception ex) {
             logger.error("前置通知异常......");
             logger.error(MessageFormat.format("异常信息:{}", ex.getMessage().toString()));
@@ -79,7 +80,7 @@ private ISystemLogDao systemLogDao;*/
         String ip = request.getRemoteAddr();
         String params= JSONArray.toJSONString(joinPoint.getArgs());
         try{
-/*            SystemLog log = new SystemLog();
+            SystemLog log = new SystemLog();
             log.setDescription(getMethodDescription(joinPoint,1));
             log.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()");
             log.setLog_type(Byte.valueOf("1"));
@@ -89,7 +90,7 @@ private ISystemLogDao systemLogDao;*/
             log.setUser_id(userId);
             log.setParams(JSON.toJSONString(joinPoint.getArgs()));
             log.setCtime(Calendar.getInstance().getTime());
-            systemLogDao.save(log);*/
+            systemLogDao.save(log);
         }catch (Exception ex) {
             logger.error("异常通知异常......");
             logger.error(MessageFormat.format("异常信息:{}", ex.getMessage().toString()));
@@ -111,7 +112,7 @@ private ISystemLogDao systemLogDao;*/
         String ip = request.getRemoteAddr();
         String params= JSONArray.toJSONString(joinPoint.getArgs());
         try{
-/*            SystemLog log = new SystemLog();
+            SystemLog log = new SystemLog();
             log.setDescription(getMethodDescription(joinPoint,1));
             log.setMethod(joinPoint.getTarget().getClass().getName() + "." + joinPoint.getSignature().getName() + "()");
             log.setLog_type(Byte.valueOf("1"));
@@ -121,7 +122,7 @@ private ISystemLogDao systemLogDao;*/
             log.setUser_id(userId);
             log.setParams(JSON.toJSONString(joinPoint.getArgs()));
             log.setCtime(Calendar.getInstance().getTime());
-            systemLogDao.save(log);*/
+            systemLogDao.save(log);
         }catch (Exception ex) {
             logger.error("通知异常......");
             logger.error(MessageFormat.format("异常信息:{}", ex.getMessage().toString()));

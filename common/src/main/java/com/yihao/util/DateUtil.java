@@ -1,6 +1,7 @@
 package com.yihao.util;
 
-import org.apache.commons.lang.StringUtils;
+import com.alibaba.druid.util.StringUtils;
+import com.cyjk.szb.common.exception.SzbException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -8,97 +9,232 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Created by lenovo on 2014/12/3.
+ * 日期转换类 转换一个 java.util.Date 对象到一个字符串以及 一个字符串到一个 java.util.Date 对象.
  */
-public class DateUtil{
-    private static String defaultDatePattern = "yyyy-MM-dd";
+public class DateUtil {
+	public static final long SECOND = 1000;
+
+	public static final long MINUTE = SECOND * 60;
+
+	public static final long HOUR = MINUTE * 60;
+
+	public static final long DAY = HOUR * 24;
+
+	public static final long WEEK = DAY * 7;
+
+	public static final long MONTH = DAY * 30;
+
+	public static final long YEAR = DAY * 365;
+
+	public static final String TYPE_DATE = "date";
+
+	public static final String TYPE_TIME = "time";
+
+	public static final String TYPE_DATETIME = "datetime";
+
+	/**
+	 * 模式:yyyy-MM-dd HH:mm
+	 */
+//	public static final String PATTERN_DATETIME = "yyyy-MM-dd HH:mm";
+
+//	public static final String PATTERN_DATETIME_ = "yyyyMMddHHmmss";
+
+	/**
+	 * 模式:yyyy-MM-dd
+	 */
+//	public static final String PATTERN_DATE = "yyyy-MM-dd";
+
+	private static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+	public static final String[] TYPE_ALL = { TYPE_DATE, TYPE_DATETIME,
+			TYPE_TIME };
+
+	/**
+	 * 将字符串转换为Date类型
+	 * 
+	 * @param strDate
+	 * @param pattern
+	 *            格式
+	 * @return
+	 * @throws ParseException
+	 */
+	public static Date convertStringToDate(String strDate, String pattern) {
+		if (StringUtils.isEmpty(strDate))
+			return null;
+		if (StringUtils.isEmpty(pattern))
+			pattern = DEFAULT_PATTERN;
+		SimpleDateFormat df = new SimpleDateFormat(pattern);
+		try {
+			return df.parse(strDate);
+		} catch (ParseException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * 将Date转换为字符串
+	 * 
+	 * @param aDate
+	 * @param pattern
+	 *            格式
+	 * @return
+	 */
+	public static String convertDateToString(Date aDate, String pattern) {
+		if (aDate == null)
+			return null;
+		if (StringUtils.isEmpty(pattern))
+			pattern = DEFAULT_PATTERN;
+		SimpleDateFormat df = new SimpleDateFormat(pattern);
+		return df.format(aDate);
+	}
+	
     /**
-     * 获得默认的 date pattern
-     */
-    public static String getDatePattern(){
-        return defaultDatePattern;
-    }
+     * string格式化为string
+     * */
+	public static String stringFormat(String time,String pattern){
+		Date date = null;
+		try {
+		    date = new SimpleDateFormat(DEFAULT_PATTERN).parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return convertDateToString(date, pattern);
+	}
+	
+	/**
+	 * 将日期、时间合并成长整型数据
+	 * 
+	 * @param date
+	 *            日期
+	 * @param time
+	 *            时间
+	 * @return
+	 */
+	public static long getDateTimeNumber(Date date, Date time) {
+		Calendar dateCal = getCalendar(date);
+		Calendar timeCal = getCalendar(time);
+		dateCal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
+		dateCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+		dateCal.set(Calendar.SECOND, timeCal.get(Calendar.SECOND));
+		dateCal.set(Calendar.MILLISECOND, timeCal.get(Calendar.MILLISECOND));
+		return dateCal.getTimeInMillis();
+	}
 
-    /**
-     * 返回预设Format的当前日期字符串
-     */
-    public static String getToday(){
-        Date today = new Date();
-        return format(today);
-    }
+	/**
+	 * 将日期的时间部分清除后，转换成long类型
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static long getDateNumber(Date date) {
+		return removeTime(date).getTimeInMillis();
+	}
 
-    /**
-     * 使用预设Format格式化Date成字符串
-     */
-    public static String format(Date date){
-        return date == null ? " " : format(date, getDatePattern());
-    }
+	/**
+	 * 获取日期(获取当天日期getDate(0))
+	 * 
+	 * @param day
+	 * @return
+	 */
+	public static Date getDate(int day) {
+		Calendar cal = getCalendar(new Date());
+		cal.add(Calendar.DATE, day);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal.getTime();
+	}
 
-    /**
-     * 使用参数Format格式化Date成字符串
-     */
-    public static String format(Date date, String pattern) {
-        return date == null ? " " : new SimpleDateFormat(pattern).format(date);
-    }
+	/**
+	 * 将时间的日期部分清除后，转换成long类型
+	 * 
+	 * @param date
+	 * @return
+	 */
+	public static long getTimeNubmer(Date date) {
+		return getCalendar(date).getTimeInMillis() - getDateNumber(date);
+	}
 
-    /**
-     * 使用预设格式将字符串转为Date
-     */
-    public static Date parse(String strDate) throws ParseException {
-        return StringUtils.isBlank(strDate) ? null : parse(strDate, getDatePattern());
-    }
+	/**
+	 * 将一个不包含日期的时间量，转换为Date类型，其中的日期为当天
+	 * 
+	 * @param l
+	 * @return
+	 */
+	public static Date getTimeByNubmer(long l) {
+		return new Date(getDateNumber(new Date()) + l);
+	}
 
-    /**
-     * 使用参数Format将字符串转为Date
-     */
-    public static Date parse(String strDate, String pattern) throws ParseException {
-        return StringUtils.isBlank(strDate) ? null : new SimpleDateFormat(pattern).parse(strDate);
-    }
+	public static Calendar getCalendar(long millis) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTimeInMillis(millis);
+		return cal;
+	}
 
-    /**
-     * 在日期上增加数个整月
-     */
-    public static Date addMonth(Date date, int n){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MONTH, n);
-        return cal.getTime();
-    }
+	public static Calendar getCalendar(Date date) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal;
+	}
 
-    public static String getLastDayOfMonth(String year, String month){
-        Calendar cal = Calendar.getInstance();
-        // 年
-        cal.set(Calendar.YEAR, Integer.parseInt(year));
-        // 月，因为Calendar里的月是从0开始，所以要-1
-        // cal.set(Calendar.MONTH, Integer.parseInt(month) - 1);
-        // 日，设为一号
-        cal.set(Calendar.DATE, 1);
-        // 月份加一，得到下个月的一号
-        cal.add(Calendar.MONTH, 1);
-        // 下一个月减一为本月最后一天
-        cal.add(Calendar.DATE, -1);
-        return String.valueOf(cal.get(Calendar.DAY_OF_MONTH));// 获得月末是几号
-    }
+	public static Calendar removeTime(Date date) {
+		if (date == null) {
+			return null;
+		}
 
-    public static Date getDate(String year, String month, String day) throws ParseException
-    {
-        String result = year + "-" + (month.length() == 1 ? ("0" + month) : month) + "-"
-                + (day.length()==1?("0" + day):day);
-        return parse(result);
-    }
+		Calendar cal = getCalendar(date);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		return cal;
+	}
+    
+	/**
+	 * 在给定的时间点上增加小时，分钟
+	 * 
+	 * @param date
+	 * @param hours
+	 * @param minutes
+	 * @return
+	 */
+	public static Date addTime(Date date, int hours, int minutes) {
+		if (date == null) {
+			return null;
+		}
+		Calendar cal = getCalendar(date);
+		cal.set(Calendar.HOUR_OF_DAY, cal.get(Calendar.HOUR_OF_DAY) + hours);
+		cal.set(Calendar.MINUTE, cal.get(Calendar.MINUTE) + minutes);
+		return cal.getTime();
+	}
 
-    public static String getMonthDate(Date date){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return (cal.get(Calendar.MONTH)+1)+"月"+cal.get(Calendar.DATE)+"日";
-    }
+	public static Date getNextDay(Date date, int day) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, day);
+		return cal.getTime();
+	}
 
-    //加三天
-    public static String getThirtDate(Date date) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.DAY_OF_MONTH, 3);
-        return (cal.get(Calendar.MONTH)+1)+"月"+cal.get(Calendar.DATE)+"日";
-    }
-
+	public static int transferTimeToSeconds(int hours, int minutes) {
+		return (hours * 60 * 60) + (minutes * 60);
+	}
+	
+	/**
+	 * 日期加上天数的时间
+	 * @param date
+	 * @return
+	 */
+	public static Date dateAddDay(Date date,int day){
+		return add(date,Calendar.DAY_OF_YEAR,day);
+	}
+	
+	private static Date add(Date date,int type,int value){
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(type, value);
+		return calendar.getTime();
+	}
+	
 }

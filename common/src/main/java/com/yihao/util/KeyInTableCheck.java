@@ -1,6 +1,6 @@
 package com.yihao.util;
 
-import com.yihao.core.Base;
+import com.yihao.base.Base;
 import com.yihao.dao.BaseDao;
 import com.yihao.annotaion.KeyInTable;
 import org.springframework.util.StringUtils;

@@ -38,8 +38,8 @@
 </typeHandlers>
 	<plugins>
 		<plugin interceptor="com.hehenian.biz.common.mybatis.PageInterceptor">
-			<property name="a" value="a" />
-			<property name="b" value="b" />
+			<property name="dialect" value="mysql" />
+			<property name="pageSqlId" value=".*Page$" />
 		</plugin>
 	</plugins>
 
